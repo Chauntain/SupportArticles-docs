@@ -5,17 +5,17 @@ ms.date: 09/26/2023
 ms.reviewer: v-cshields, luche, v-six
 search.appverid: MET150
 ---
-# Troubleshoot update rings for Windows 11 and Windows 10 in Microsoft Intune
+# Troubleshoot update rings for Windows 10 and Windows 11 in Microsoft Intune
 
-This article provides guidelines for troubleshooting issues with the Windows update ring settings to ensure they're successfully delivered to your organization's Windows 11 or Windows 10 devices. Update ring settings manage how and when Windows devices install operating system (OS) updates. For more information about update ring policies, see [Update rings for Windows 10 and later policy in Intune](/mem/intune/protect/windows-10-update-rings).
+This article provides guidelines for troubleshooting issues with the Windows update ring settings to ensure they're successfully delivered to your organization's Windows 10 or Windows 11 devices. Update ring settings manage how and when Windows devices install operating system (OS) updates. For more information about update ring policies, see [Update rings for Windows 10 and later policy in Intune](/mem/intune/protect/windows-10-update-rings).
 
-If you experience an issue while deploying update ring policies to Windows 11 or Windows 10 devices using Microsoft Intune, determine whether the issue is Intune or Windows-related. Therefore, it's important to consider whether the Intune policy has been successfully deployed to the target device.
+If you experience an issue while deploying update ring policies to Windows 10 or Windows 11 devices using Microsoft Intune, it's best to first determine whether the issue is Intune or Windows-related. Therefore, it's important to consider whether the Intune policy has been successfully deployed to the target device.
 
 Some deployment insights are included in this guide to highlight how OS and policy updates work. The following steps can be performed independently of others for times when other troubleshooting efforts don't provide the desired results.
 
-## What Windows update ring policies do
+## What Windows Update ring policies do
 
-Windows update ring policies define only an update strategy, such as blocking driver installation, setting deferral periods, or setting maintenance times. The update ring policy doesn't update the infrastructure itself. This means that it needs an existing update solution to obtain the actual updates, such as Windows Updates for Business.
+Windows Update ring policies define only an update strategy, such as blocking driver installation, setting deferral periods, or setting maintenance times. Update ring policies don't provide the updated  infrastructure itself, meaning that it will still need to use an existing update solution, such as Windows Updates for Business,to obtain the actual updates.
 
 Windows update ring policies created in Intune use the [Windows Policy CSP](/windows/client-management/mdm/policy-configuration-service-provider) for updating Windows devices. Once Intune deploys the Windows update ring policy to an assigned device, the Policy configuration services provider (CSP) writes the appropriate values to the Windows registry to make the policy take effect.
 
@@ -61,7 +61,7 @@ Check the individual device to confirm that the update ring policy has been succ
 - Navigate to **Device status**, **User status**, or **End user update status** for an overview of the list of devices to which the policy has been applied. This list is useful for quickly identifying whether a specific device has received the update policy.
 - Navigate to the device in the Intune admin center, and then go to **Device configuration status** > **Update ring policy** to see whether a specific device has the update ring policy applied.
 
-Review the update ring policy for an affected device. There may be two entries for the policy depending on the type of user device being managed. When Intune deploys a policy (any policy, not just update rings), the settings are delivered against both the logged-on user and the system context of the device. This causes the two entries, which is a normal occurrence. However, if you manage Kiosk-type devices with Autologon or a local account user type, only the system account is displayed.
+Review the update ring policy for an affected device. There may be two entries for the policy depending on the type of devices being managed. When Intune deploys a policy (any policy, not just update rings), the settings are delivered against both the logged-on user and the system context of the device. This causes the two entries, which is a normal occurrence. However, if you manage Kiosk-type devices with Autologon or a local account user type, only the system account is displayed.
 
 :::image type="content" source="media/troubleshoot-update-rings/device-status-pane.png" alt-text="Screenshot of the Device status pane on the Default_UpdateRing page." lightbox="media/troubleshoot-update-rings/device-status-pane.png":::
 
@@ -73,7 +73,7 @@ Refer to the **Device configuration** report to see whether a policy has been ap
 
 ## Verify the settings on the device
 
-To confirm that the policies have been applied to the device locally, navigate to **Settings** > **Accounts** > **Access work or school**. The list of policies applied to the device from Intune will include whether they're managed by your organization.
+To confirm that the policies have been applied to the device locally, navigate to **Settings** > **Accounts** > **Access work or school**. The list of policies applied to the device from Intune will be included if they're managed by your organization.
 
 :::image type="content" source="media/troubleshoot-update-rings/policies-on-the-device.png" alt-text="Screenshot of the policies on the device in the Managed by Organization pane.":::
 
@@ -99,9 +99,12 @@ The best way to validate what policies are delivered through GPO is with the [gp
 
 If the policy source is "Local Group Policy," SCCM could have set it. If it's not, edit the group policy object from the Active Directory infrastructure to remove the conflicting values.
 
-A policy conflict between MDM and group policies appears as an unexpected scenario during the update process. Updates won't happen or will happen in an unplanned manner. For example, a device might be stuck on an earlier version of Windows and unable to upgrade.
+A policy conflict between MDM and group policies behaves as an unexpected scenario during the update process. Updates won't happen or will happen in an unplanned manner. For example, a device might be stuck on an earlier version of Windows and unable to upgrade.
 
 Some of these conflicts can be resolved using the `ControlPolicyConflict` CSP. Generally, if the update process isn't working as expected, investigate for a policy conflict. For more information, see [Policy CSP - ControlPolicyConflict](/windows/client-management/mdm/policy-csp-controlpolicyconflict).
+
+>NOTE!
+>The ControlPolicyConflict CSP doesn't apply to the Update Policy CSP for managing Windows updates.
 
 ### Confirm that the correct registry keys have been updated
 
@@ -161,7 +164,7 @@ From here, find additional information about the deployed policies that might co
 
 If the previous options didn't provide the results needed to identify the issue, and the devices are still not updating, or are doing it erratically, then consider the following questions:
 
-- Are reporting and telemetry enabled for the device? Intune can deliver telemetry to devices in multiple ways. However, the most common method is with a [Device Restriction policy](/mem/intune/configuration/device-restrictions-windows-10#reporting-and-telemetry), either through Intune or Group Policy.
+- Are reporting and telemetry enabled for the device? Intune can deliver telemetry to devices in multiple ways. However, the most common method via Intune is with a [Device Restriction policy](/mem/intune/configuration/device-restrictions-windows-10#reporting-and-telemetry).Otherwise, it can be done via group policy.
 
     For more information, see the [Manage diagnostic data using Group Policy and MDM](/windows/privacy/configure-windows-diagnostic-data-in-your-organization#manage-diagnostic-data-using-group-policy-and-mdm) section of [Configure Windows diagnostic data in your organization](/windows/privacy/configure-windows-diagnostic-data-in-your-organization).
 
